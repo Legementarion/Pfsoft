@@ -9,12 +9,9 @@ import com.lego.pfsoft.adapters.ColorAdapterRV;
 import com.lego.pfsoft.model.Item;
 import com.lego.pfsoft.utils.ColorXmlParser;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Callback{
+public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Callback {
 
     private List<Item> mItems;
     private ColorAdapterRV mAdapter;
@@ -24,17 +21,16 @@ public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Ca
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            mItems = ColorXmlParser.getEventsFromXML(this);
+        init();
+    }
 
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.color_rv);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            mAdapter = new ColorAdapterRV(this, mItems, this);
-            recyclerView.setAdapter(mAdapter);
-            recyclerView.setHasFixedSize(true);
-        } catch (XmlPullParserException | IOException e) {
-            e.printStackTrace();
-        }
+    private void init() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.color_rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mItems = ColorXmlParser.getEventsFromXML(this);
+        mAdapter = new ColorAdapterRV(this, mItems, this);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.setHasFixedSize(true);
     }
 
     @Override
