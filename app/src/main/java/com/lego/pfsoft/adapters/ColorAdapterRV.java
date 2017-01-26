@@ -2,12 +2,12 @@ package com.lego.pfsoft.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 import com.lego.pfsoft.R;
 import com.lego.pfsoft.model.Item;
@@ -17,51 +17,41 @@ import java.util.List;
 
 public class ColorAdapterRV extends RecyclerView.Adapter<ColorAdapterRV.ColorsViewHolder> {
 
-    private List<Item> mItems;
+    private final Callback mListener;
+    private final List<Item> mItems;
+    private final Context mContext;
+    private final int mExpandedHeight;
 
-    public ColorAdapterRV(List<Item> items) {
+    public ColorAdapterRV(Callback mListener, List<Item> items, Context context) {
+        this.mListener = mListener;
         mItems = new ArrayList<>(items);
+        mContext = context;
+        mExpandedHeight = mContext.getResources().getDimensionPixelSize(R.dimen.expanded_height);
     }
 
     @Override
     public ColorsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        CheckedTextView view = (CheckedTextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.color_rv_item, parent, false);
-        return new ColorsViewHolder(view);
+        TextView view = (TextView) LayoutInflater.from(mContext).inflate(R.layout.color_rv_item, parent, false);
+        return new ColorsViewHolder(view, mListener);
     }
 
     @Override
     public void onBindViewHolder(final ColorsViewHolder holder, final int position) {
-        holder.mTextView.setText(mItems.get(position).getName());
-        holder.mTextView.setTextColor(Color.parseColor(mItems.get(position).getColor()));
-        holder.mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) v.getLayoutParams();
-                if (((CheckedTextView) v).isChecked()) {
-                    holder.mTextView.setBackgroundResource(R.drawable.button);
-                    holder.mTextView.setTextColor(Color.parseColor(mItems.get(position).getColor()));
-                    params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
-                    v.setLayoutParams(params);
-                }
-                else {
-                    holder.mTextView.setBackground(customView(v.getContext(), Color.parseColor(mItems.get(position).getColor())));
-                    holder.mTextView.setTextColor(Color.GRAY);
-                    params.height = 400;
-                    v.setLayoutParams(params);
-                }
-                ((CheckedTextView) v).toggle();
-            }
+        final Item item = mItems.get(position);
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.mTextView.getLayoutParams();
+        holder.mTextView.setText(item.getName());
 
-            private GradientDrawable customView(Context context, int backgroundColor) {
-                GradientDrawable shape = new GradientDrawable();
-                shape.setShape(GradientDrawable.RECTANGLE);
-                int dimenSize = context.getResources().getDimensionPixelOffset(R.dimen.border_radius);
-                shape.setCornerRadii(new float[]{dimenSize, dimenSize, dimenSize, dimenSize, dimenSize, dimenSize, dimenSize, dimenSize});
-                shape.setColor(backgroundColor);
-                shape.setStroke(3, backgroundColor);
-                return shape;
-            }
-        });
+        if (item.isChecked()) {
+            holder.mTextView.setTextColor(Color.GRAY);
+            holder.mTextView.getBackground().setColorFilter(item.getColor(), PorterDuff.Mode.SRC_ATOP);
+            params.height = mExpandedHeight;
+            holder.mTextView.setLayoutParams(params);
+        } else {
+            holder.mTextView.setTextColor(item.getColor());
+            holder.mTextView.getBackground().clearColorFilter();
+            params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+            holder.mTextView.setLayoutParams(params);
+        }
     }
 
     @Override
@@ -69,14 +59,25 @@ public class ColorAdapterRV extends RecyclerView.Adapter<ColorAdapterRV.ColorsVi
         return mItems.size();
     }
 
-    class ColorsViewHolder extends RecyclerView.ViewHolder {
-        CheckedTextView mTextView;
+    static class ColorsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        TextView mTextView;
+        private final Callback mListener;
 
-        ColorsViewHolder(CheckedTextView view) {
+        ColorsViewHolder(TextView view, Callback mListener) {
             super(view);
             mTextView = view;
-            mTextView.setTextSize(20);
+            this.mListener = mListener;
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            mListener.onItemClick(getAdapterPosition());
+        }
+    }
+
+    public interface Callback {
+        void onItemClick(int position);
     }
 
 }

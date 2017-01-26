@@ -2,9 +2,10 @@ package com.lego.pfsoft.model;
 
 public class Item {
     private String mName;
-    private String mColor;
+    private int mColor;
+    private boolean mChecked;
 
-    public Item(String name, String color) {
+    public Item(String name, int color) {
         this.mName = name;
         this.mColor = color;
     }
@@ -17,11 +18,19 @@ public class Item {
         mName = name;
     }
 
-    public String getColor() {
+    public int getColor() {
         return mColor;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         mColor = color;
+    }
+
+    public boolean isChecked() {
+        return mChecked;
+    }
+
+    public void toggle(){
+        mChecked = !mChecked;
     }
 }
