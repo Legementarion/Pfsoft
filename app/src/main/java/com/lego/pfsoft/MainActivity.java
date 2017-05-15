@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.facebook.appevents.AppEventsLogger;
 import com.lego.pfsoft.adapters.ColorAdapterRV;
 import com.lego.pfsoft.model.Item;
 import com.lego.pfsoft.utils.ColorXmlParser;
@@ -38,4 +39,11 @@ public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Ca
         mItems.get(position).toggle();
         mAdapter.notifyItemChanged(position);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppEventsLogger.activateApp(getApplication());
+    }
+
 }
