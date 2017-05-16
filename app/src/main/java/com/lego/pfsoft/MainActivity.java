@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.facebook.appevents.AppEventsConstants;
 import com.facebook.appevents.AppEventsLogger;
 import com.lego.pfsoft.adapters.ColorAdapterRV;
 import com.lego.pfsoft.model.Item;
@@ -16,12 +17,13 @@ public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Ca
 
     private List<Item> mItems;
     private ColorAdapterRV mAdapter;
+    private AppEventsLogger logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        logger = AppEventsLogger.newLogger(getApplicationContext());
         init();
     }
 
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Ca
     @Override
     protected void onResume() {
         super.onResume();
-        AppEventsLogger.activateApp(getApplication());
+        logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT);
     }
 
 }
