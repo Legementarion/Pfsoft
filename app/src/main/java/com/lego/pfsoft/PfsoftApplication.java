@@ -1,1 +1,1 @@
-package com.lego.pfsoft;import android.app.Application;import com.facebook.appevents.AppEventsLogger;public class PfsoftApplication extends Application {    @Override    public void onCreate() {        super.onCreate();        AppEventsLogger.activateApp(this);    }}
+package com.lego.pfsoft;import android.app.Application;public class PfsoftApplication extends Application {    @Override    public void onCreate() {        super.onCreate();    }}

@@ -5,26 +5,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.facebook.appevents.AppEventsConstants;
-import com.facebook.appevents.AppEventsLogger;
 import com.lego.pfsoft.adapters.ColorAdapterRV;
 import com.lego.pfsoft.model.Item;
 import com.lego.pfsoft.utils.ColorXmlParser;
+import android.provider.Settings.Secure;
 
 import java.util.List;
+
+import ly.count.android.sdk.Countly;
+import ly.count.android.sdk.DeviceId;
 
 public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Callback {
 
     private List<Item> mItems;
     private ColorAdapterRV mAdapter;
-    private AppEventsLogger logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        logger = AppEventsLogger.newLogger(getApplicationContext());
+        initAnalytics();
         init();
+    }
+
+    private void initAnalytics() {
+        Countly.sharedInstance().init(this, "https://try.count.ly", "7851abb832411ac40d93cff97bf4e1766c7e8e5a", null, DeviceId.Type.OPEN_UDID);
+        Countly.sharedInstance().setViewTracking(true);
+        Countly.sharedInstance().enableCrashReporting();
     }
 
     private void init() {
@@ -43,9 +50,20 @@ public class MainActivity extends AppCompatActivity implements ColorAdapterRV.Ca
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Countly.sharedInstance().onStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Countly.sharedInstance().onStop();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT);
     }
 
 }

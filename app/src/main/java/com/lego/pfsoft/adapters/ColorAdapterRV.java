@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.appevents.AppEventsLogger;
 import com.lego.pfsoft.R;
 import com.lego.pfsoft.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import ly.count.android.sdk.Countly;
 
 public class ColorAdapterRV extends RecyclerView.Adapter<ColorAdapterRV.ColorsViewHolder> {
 
@@ -22,13 +24,11 @@ public class ColorAdapterRV extends RecyclerView.Adapter<ColorAdapterRV.ColorsVi
     private final List<Item> mItems;
     private final Context mContext;
     private final int mExpandedHeight;
-    private AppEventsLogger logger;
 
     public ColorAdapterRV(Callback mListener, List<Item> items, Context context) {
         this.mListener = mListener;
         mItems = new ArrayList<>(items);
         mContext = context;
-        logger = AppEventsLogger.newLogger(mContext);
         mExpandedHeight = mContext.getResources().getDimensionPixelSize(R.dimen.expanded_height);
     }
 
@@ -45,7 +45,7 @@ public class ColorAdapterRV extends RecyclerView.Adapter<ColorAdapterRV.ColorsVi
         holder.mTextView.setText(item.getName());
 
         if (item.isChecked()) {
-            logger.logEvent(item.getName());
+            Countly.sharedInstance().recordEvent(item.getName(), position+1);
             holder.mTextView.setTextColor(Color.GRAY);
             holder.mTextView.getBackground().setColorFilter(item.getColor(), PorterDuff.Mode.SRC_ATOP);
             params.height = mExpandedHeight;
